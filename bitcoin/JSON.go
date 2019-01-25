@@ -1,23 +1,5 @@
 package bitcoin
 
-// Block comment
-type Block struct {
-	Hash              string   `json:"hash"`
-	Confirmations     int64    `json:"confirmations"`
-	Size              uint64   `json:"size"`
-	Height            uint32   `json:"height"`
-	Version           uint32   `json:"version"`
-	Merkleroot        string   `json:"merkleroot"`
-	Tx                []string `json:"tx"`
-	Time              int64    `json:"time"`
-	Nonce             uint64   `json:"nonce"`
-	Bits              string   `json:"bits"`
-	Difficulty        float64  `json:"difficulty"`
-	Chainwork         string   `json:"chainwork,omitempty"`
-	Previousblockhash string   `json:"previousblockhash"`
-	Nextblockhash     string   `json:"nextblockhash"`
-}
-
 // RawTransaction comment
 type RawTransaction struct {
 	Hex           string `json:"hex"`

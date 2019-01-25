@@ -2,7 +2,6 @@ package bitcoin
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,7 +15,7 @@ const (
 	rpcClientTimeout = 30
 )
 
-// A rpcClient represents a JSON RPC client (over HTTP(s)).
+// A rpcClient represents a JSON RPC client (over HTTP.
 type rpcClient struct {
 	serverAddr string
 	user       string
@@ -32,35 +31,23 @@ type rpcRequest struct {
 	JSONRpc string      `json:"jsonrpc"`
 }
 
-// rpcError represents a RCP error
-/*type rpcError struct {
-	Code    int16  `json:"code"`
-	Message string `json:"message"`
-}*/
-
 type rpcResponse struct {
 	ID     int64           `json:"id"`
 	Result json.RawMessage `json:"result"`
 	Err    interface{}     `json:"error"`
 }
 
-func newClient(address string, user, passwd string, useSSL bool) (c *rpcClient, err error) {
+func newClient(address string, user, passwd string) (c *rpcClient, err error) {
 	if len(address) == 0 {
 		err = errors.New("Bad call missing argument address")
 		return
 	}
 	var serverAddr string
 	var httpClient *http.Client
-	if useSSL {
-		serverAddr = "https://"
-		t := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		}
-		httpClient = &http.Client{Transport: t}
-	} else {
-		serverAddr = "http://"
-		httpClient = &http.Client{}
-	}
+
+	serverAddr = "http://"
+	httpClient = &http.Client{}
+
 	c = &rpcClient{serverAddr: fmt.Sprintf("%s%s", serverAddr, address), user: user, passwd: passwd, httpClient: httpClient}
 	return
 }

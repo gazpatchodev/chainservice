@@ -10,8 +10,8 @@ type Bitcoind struct {
 }
 
 // New return a new bitcoind
-func New(address string, user, passwd string, useSSL bool) (*Bitcoind, error) {
-	rpcClient, err := newClient(address, user, passwd, useSSL)
+func New(address string, user, passwd string) (*Bitcoind, error) {
+	rpcClient, err := newClient(address, user, passwd)
 	if err != nil {
 		return nil, err
 	}
