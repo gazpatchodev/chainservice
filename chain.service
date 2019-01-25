@@ -1,0 +1,25 @@
+# Place this file in /etc/systemd/system
+# systemctl start chain.service
+# systemctl stop chain.service
+# journalctl -xe
+# systemctl enable chain.service
+
+[Unit]
+Description=Chain Service
+After=network.target
+
+[Service]
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+ExecStart=/home/maestro/chain/chain
+KillSignal=SIGINT
+WorkingDirectory=/home/maestro/chain
+User=maestro
+Environment="SETTINGS_CONTEXT=live"
+Type=simple
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
