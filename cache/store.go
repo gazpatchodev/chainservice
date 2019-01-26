@@ -50,8 +50,9 @@ type OPReturnData struct {
 
 // Part struct
 type Part struct {
-	Hex  string `json:"hex,omitempty"`
-	UTF8 string `json:"utf8,omitempty"`
+	Hex    string `json:"hex,omitempty"`
+	UTF8   string `json:"utf8,omitempty"`
+	BASE64 string `json:"base64,omitempty"`
 }
 
 // GetOPReturnData comment
