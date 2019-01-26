@@ -3,3 +3,4 @@ chainservice
 build
 debug
 .history
+*.json
