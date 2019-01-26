@@ -1,6 +1,5 @@
 chainservice
 *.bak
 build
-node_modules/
 debug
 .history

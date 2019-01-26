@@ -47,6 +47,5 @@ cp settings.conf start.sh stop.sh tailLog.sh build/darwin
 cp start.sh stop.sh tailLog.sh link_latest.sh build/linux
 cp settings.conf build/linux/settings.conf.example
 cp chain.service build/linux/chain.service.example
-# cp certs/ca.pem certs/clientCert.pem certs/clientKey.pem build/linux/certs
 
 echo $GIT_COMMIT > build/commit.dat

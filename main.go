@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -23,7 +24,7 @@ var (
 	address, _       = gocore.Config().Get("bitcoinAddress")
 	user, _          = gocore.Config().Get("bitcoinUser")
 	password, _      = gocore.Config().Get("bitcoinPassword")
-	bitcoind, _      = bitcoin.New(address, user, password, false)
+	bitcoind, _      = bitcoin.New(address, user, password)
 )
 
 type part struct {
@@ -39,8 +40,22 @@ type response struct {
 	Hex       string      `json:"hex,omitempty"`
 	Type      string      `json:"type"`
 	SubType   string      `json:"subType,omitempty"`
+	Text      string      `json:"text,omitempty"`
 	Parts     []part      `json:"parts,omitempty"`
 	Err       interface{} `json:"error,omitempty"`
+}
+
+func readPushData(buf []byte) string {
+	switch buf[0] {
+	case 0x4c:
+		return string(buf[2:])
+	case 0x4d:
+		return string(buf[3:])
+	case 0x4e:
+		return string(buf[5:])
+	default:
+		return string(buf[1:])
+	}
 }
 
 func main() {
@@ -102,14 +117,36 @@ func getTransactionOutput(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output := tx.Vout[vout]
+	script, err := hex.DecodeString(tx.Vout[vout].ScriptPubKey.Hex)
+	if err != nil {
+		logger.Errorf("Failed to Decode script: %+v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	// Make sure this is an OP_RETURN script...
+	if script[0] != 0x6a {
+		logger.Errorf("vout %d is not an OP_RETURN script", vout)
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, fmt.Sprintf("vout %d is not an OP_RETURN script", vout))
+		return
+	}
+
+	bt := "N/A"
+	if tx.Blocktime != 0 {
+		bt = time.Unix(0, int64(tx.Blocktime*1000*int64(time.Millisecond))).Format(time.RFC3339)
+	}
+
+	data := readPushData(script[1:])
 
 	res := response{
 		TxID:      txhash,
 		BlockHash: tx.BlockHash,
-		BlockTime: time.Unix(0, int64(tx.Blocktime*1000*int64(time.Millisecond))).Format(time.RFC3339),
-		Value:     uint16(output.Value),
-		Hex:       output.ScriptPubKey.Hex,
+		BlockTime: bt,
+		Value:     uint16(tx.Vout[vout].Value),
+		Hex:       tx.Vout[vout].ScriptPubKey.Hex,
+		Text:      data,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
