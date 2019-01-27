@@ -75,6 +75,7 @@ func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 			var p2 cache.Part
 			var d2 []byte
 			d2, buf = utils.ReadPushData(buf)
+			p2.Hex = hex.EncodeToString(d2)
 			p2.UTF8 = string(d2)
 			parts = append(parts, p2)
 		}
