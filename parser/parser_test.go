@@ -28,8 +28,8 @@ func TestSimpleScript(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "", st)
 	}
 
-	if p.UTF8 != "charley loves heidi" {
-		t.Errorf("Expected %q, got %q", "charley loves heidi", p.UTF8)
+	if (*p)[0].UTF8 != "charley loves heidi" {
+		t.Errorf("Expected %q, got %q", "charley loves heidi", (*p)[0].UTF8)
 	}
 }
 

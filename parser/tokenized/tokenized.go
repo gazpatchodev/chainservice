@@ -52,20 +52,29 @@ func New() *Tokenized {
 }
 
 // Parse comment
-func (t *Tokenized) Parse(buf []byte) (bool, string, string, *cache.Part) {
+func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
 
-	d := utils.ReadPushData(buf[1:])
+	buf = buf[1:]
+	var res []byte
 
-	if len(d) > 4 {
-		if d[0] == 0x00 && d[1] == 0x00 && d[2] == 0x00 && d[3] == 0x20 {
-			d := utils.ReadPushData(buf[4:])
+	for len(buf) > 0 {
+		var d []byte
+		d, buf = utils.ReadPushData(buf)
+		res = append(res, d...)
+	}
+
+	if len(res) > 4 {
+		if res[0] == 0x00 && res[1] == 0x00 && res[2] == 0x00 && res[3] == 0x20 {
+			d, _ := utils.ReadPushData(res[4:])
 			var p cache.Part
 			p.Hex = hex.EncodeToString(d)
 			p.UTF8 = string(d)
-			return true, "TOKENIZED", "", &p
+			var parts []cache.Part
+			parts = append(parts, p)
+			return true, "TOKENIZED", "", &parts
 		}
 	}
 

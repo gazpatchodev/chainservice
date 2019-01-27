@@ -1,0 +1,55 @@
+package utils
+
+import "testing"
+
+func TestRead(t *testing.T) {
+	b := []byte{0x04, 0x01, 0x02, 0x03, 0x04, 0x05}
+
+	res, remaining := ReadPushData(b)
+
+	t.Log(res, remaining)
+}
+
+func Test4cRead(t *testing.T) {
+	b := []byte{0x4c, 0x04, 0x01, 0x02, 0x03, 0x04, 0x05}
+
+	res, remaining := ReadPushData(b)
+
+	t.Log(res, remaining)
+}
+
+func Test4dRead(t *testing.T) {
+	b := []byte{0x4d, 0x04, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
+
+	res, remaining := ReadPushData(b)
+
+	t.Log(res, remaining)
+}
+
+func Test4eRead(t *testing.T) {
+	b := []byte{0x4e, 0x04, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
+
+	res, remaining := ReadPushData(b)
+
+	t.Log(res, remaining)
+}
+
+func TestLoop(t *testing.T) {
+	b := []byte{0x4e, 0x04, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x01, 0x05}
+
+	for len(b) > 0 {
+		var res []byte
+		res, b = ReadPushData(b)
+		t.Log(res)
+	}
+}
+
+func TestExhaustedLoop(t *testing.T) {
+	b := []byte{0x4e, 0x04, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
+
+	for len(b) > 0 {
+		var res []byte
+		res, b = ReadPushData(b)
+		t.Log(res)
+	}
+}

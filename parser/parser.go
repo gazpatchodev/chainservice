@@ -9,7 +9,7 @@ import (
 
 // Parser interface
 type Parser interface {
-	Parse(buf []byte) (bool, string, string, *cache.Part)
+	Parse(buf []byte) (bool, string, string, *[]cache.Part)
 }
 
 var parsers []Parser
@@ -21,11 +21,11 @@ func init() {
 }
 
 // Parse comment
-func Parse(buf []byte) (string, string, *cache.Part) {
+func Parse(buf []byte) (string, string, *[]cache.Part) {
 	for _, p := range parsers {
-		match, t, st, part := p.Parse(buf)
+		match, t, st, parts := p.Parse(buf)
 		if match {
-			return t, st, part
+			return t, st, parts
 		}
 	}
 	return "UNKNOWN", "", nil

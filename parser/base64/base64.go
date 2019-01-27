@@ -30,14 +30,21 @@ func New() *Base64 {
 }
 
 // Parse comment
-func (t *Base64) Parse(buf []byte) (bool, string, string, *cache.Part) {
+func (t *Base64) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
 
-	d := utils.ReadPushData(buf[1:])
+	buf = buf[1:]
+	var res []byte
 
-	s := string(d)
+	for len(buf) > 0 {
+		var d []byte
+		d, buf = utils.ReadPushData(buf)
+		res = append(res, d...)
+	}
+
+	s := string(res)
 
 	var base64Type string
 
@@ -64,7 +71,9 @@ func (t *Base64) Parse(buf []byte) (bool, string, string, *cache.Part) {
 			if len(sr) > 1 {
 				var p cache.Part
 				p.BASE64 = sr[1]
-				return true, "BASE64", base64Type, &p
+				var parts []cache.Part
+				parts = append(parts, p)
+				return true, "BASE64", base64Type, &parts
 			}
 		}
 	}

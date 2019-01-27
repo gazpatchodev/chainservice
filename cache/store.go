@@ -15,6 +15,7 @@ import (
 	"github.com/ordishs/gocore"
 
 	"../bitcoin"
+	"../utils"
 )
 
 var (
@@ -115,23 +116,17 @@ func GetOPReturnDataFromBitcoin(txid string, vout uint16) (*OPReturnData, error)
 func readPushDatas(buf []byte) []Part {
 	var parts []Part
 
-	var part Part
-	switch buf[0] {
-	case 0x4c:
-		part.Hex = hex.EncodeToString(buf[2:])
-		part.UTF8 = string(buf[2:])
-	case 0x4d:
-		part.Hex = hex.EncodeToString(buf[3:])
-		part.UTF8 = string(buf[3:])
-	case 0x4e:
-		part.Hex = hex.EncodeToString(buf[5:])
-		part.UTF8 = string(buf[5:])
-	default:
-		part.Hex = hex.EncodeToString(buf[1:])
-		part.UTF8 = string(buf[1:])
+	for len(buf) > 0 {
+		var data []byte
+		// Keep reading until there's no more data...
+		data, buf = utils.ReadPushData(buf)
+		part := Part{
+			Hex:  hex.EncodeToString(data),
+			UTF8: string(data),
+		}
+		parts = append(parts, part)
 	}
 
-	parts = append(parts, part)
 	return parts
 }
 
