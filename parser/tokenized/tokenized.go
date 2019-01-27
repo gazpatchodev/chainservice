@@ -66,15 +66,21 @@ func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 		res = append(res, d...)
 	}
 
-	if len(res) > 4 {
+	if len(res) > 6 {
 		if res[0] == 0x00 && res[1] == 0x00 && res[2] == 0x00 && res[3] == 0x20 {
-			d, _ := utils.ReadPushData(res[4:])
+			// The next 2 bytes are the tokenizer action
+			code := string(res[4:6])
+			action, ok := tokenizedActions[code]
+			if !ok {
+				return false, "", "", nil
+			}
+
 			var p cache.Part
-			p.Hex = hex.EncodeToString(d)
-			p.UTF8 = string(d)
+			p.Hex = hex.EncodeToString(res[4:])
+			p.UTF8 = string(res[7:]) // Skip the 0x00
 			var parts []cache.Part
 			parts = append(parts, p)
-			return true, "Tokenized", "", &parts
+			return true, "Tokenized", action, &parts
 		}
 	}
 
@@ -83,7 +89,7 @@ func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 	// // func (t *Tokenized) Parse(script string) (action string, text string) {
 	// strAsciiScript := string(buf)
 	// trimmedAsciiScript := strings.TrimSpace(string(strAsciiScript))
-	// prefix := trimmedAsciiScript[4:6]
+	// prefix := trimmeAsciiScript[4:6]
 
 	// action, ok := tokenizedActions[prefix]
 	// if !ok {

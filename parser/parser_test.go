@@ -9,11 +9,25 @@ import (
 func TestATokenizedScript(t *testing.T) {
 	buf, _ := hex.DecodeString("6a4cd20000002043310041424320436f20436f6d6d6f6e2045712041677265656d656e74000000000000000000000000000000000000000000000000000000000000000000000000000047425200004742520000000001a984ad75190000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041424320436f6d70616e79000000000000546f6b656e697a656400000000000000007f4e000000000000000000000000000000")
 
-	s, _, _ := Parse(buf)
+	s, st, p := Parse(buf)
 
 	if s != "Tokenized" {
 		t.Errorf("Expected %q, got %q", "Tokenized", s)
 	}
+
+	if st != "Contract Offer" {
+		t.Errorf("Expected %q, got %q", "Contract Offer", st)
+	}
+
+	if len(*p) != 1 {
+		t.Errorf("Expected 1 part, got %d", len(*p))
+	}
+
+	if (*p)[0].UTF8[0:26] != "ABC Co Common Eq Agreement" {
+		t.Errorf("Expected %q, got %q", "ABC Co Common Eq Agreement", (*p)[0].UTF8[0:26])
+	}
+
+	t.Logf("%#v", p)
 }
 
 func TestSimpleScript(t *testing.T) {
