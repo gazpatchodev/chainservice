@@ -27,7 +27,7 @@ func TestATokenizedScript(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "ABC Co Common Eq Agreement", (*p)[0].UTF8[0:26])
 	}
 
-	t.Logf("%#v", p)
+	// t.Logf("%#v", p)
 }
 
 func TestSimpleScript(t *testing.T) {
@@ -66,6 +66,29 @@ func TestVideo(t *testing.T) {
 	if st != "video/mp4" {
 		t.Errorf("Expected %q, got %q", "video/mp4", st)
 	}
+}
+
+func TestAudio(t *testing.T) {
+	h, err := ioutil.ReadFile("audio.hex")
+	if err != nil {
+		t.Error(err)
+	}
+	buf, err := hex.DecodeString(string(h))
+	if err != nil {
+		t.Error(err)
+	}
+
+	s, st, p := Parse(buf)
+
+	if s != "moneybutton.com" {
+		t.Errorf("Expected %q, got %q", "moneybutton.com", s)
+	}
+
+	if st != "URI" {
+		t.Errorf("Expected %q, got %q", "URI", st)
+	}
+
+	t.Log((*p)[0].URI)
 }
 
 func TestYoursScript(t *testing.T) {
