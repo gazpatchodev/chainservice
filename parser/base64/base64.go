@@ -73,7 +73,7 @@ func (t *Base64) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 				p.BASE64 = sr[1]
 				var parts []cache.Part
 				parts = append(parts, p)
-				return true, "BASE64", base64Type, &parts
+				return true, "Base64", base64Type, &parts
 			}
 		}
 	}

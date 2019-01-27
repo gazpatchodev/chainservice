@@ -11,8 +11,8 @@ func TestATokenizedScript(t *testing.T) {
 
 	s, _, _ := Parse(buf)
 
-	if s != "TOKENIZED" {
-		t.Errorf("Expected %q, got %q", "TOKENIZED", s)
+	if s != "Tokenized" {
+		t.Errorf("Expected %q, got %q", "Tokenized", s)
 	}
 }
 
@@ -20,8 +20,8 @@ func TestSimpleScript(t *testing.T) {
 	buf, _ := hex.DecodeString("6a13636861726c6579206c6f766573206865696469")
 	s, st, p := Parse(buf)
 
-	if s != "SIMPLE" {
-		t.Errorf("Expected %q, got %q", "SIMPLE", s)
+	if s != "OP_RETURN" {
+		t.Errorf("Expected %q, got %q", "OP_RETURN", s)
 	}
 
 	if st != "" {
@@ -45,11 +45,46 @@ func TestVideo(t *testing.T) {
 
 	s, st, _ := Parse(buf)
 
-	if s != "BASE64" {
-		t.Errorf("Expected %q, got %q", "BASE64", s)
+	if s != "Base64" {
+		t.Errorf("Expected %q, got %q", "Base64", s)
 	}
 
 	if st != "video/mp4" {
 		t.Errorf("Expected %q, got %q", "video/mp4", st)
 	}
+}
+
+func TestYoursScript(t *testing.T) {
+	buf, _ := hex.DecodeString("6a09796f7572732e6f7267")
+	s, st, p := Parse(buf)
+
+	if s != "yours.org" {
+		t.Errorf("Expected %q, got %q", "yours.org", s)
+	}
+
+	if st != "" {
+		t.Errorf("Expected %q, got %q", "", st)
+	}
+
+	if p != nil {
+		t.Errorf("Expected nil, got %v", p)
+	}
+
+}
+func TestMemoCashTipScript(t *testing.T) {
+	buf, _ := hex.DecodeString("6a026d0420f9fed7ac794200388a1e1ef4b84d5df7bb49dd297a0f71d6d0e5ddecf0d545dd")
+	s, st, p := Parse(buf)
+
+	if s != "memo.cash" {
+		t.Errorf("Expected %q, got %q", "yours.org", s)
+	}
+
+	if st != "Like / tip memo" {
+		t.Errorf("Expected %q, got %q", "Like / tip memo", st)
+	}
+
+	if len((*p)[0].Hex) != 64 {
+		t.Errorf("Expected 32 byte hash, got %v", (*p)[0].Hex)
+	}
+
 }

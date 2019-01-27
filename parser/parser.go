@@ -3,8 +3,11 @@ package parser
 import (
 	"../cache"
 	"./base64"
+	"./memocash"
 	"./simple"
+	"./stresstest"
 	"./tokenized"
+	"./yours"
 )
 
 // Parser interface
@@ -15,8 +18,12 @@ type Parser interface {
 var parsers []Parser
 
 func init() {
+	// The order of these IS important.
+	parsers = append(parsers, yours.New())
+	parsers = append(parsers, stresstest.New())
 	parsers = append(parsers, tokenized.New())
 	parsers = append(parsers, base64.New())
+	parsers = append(parsers, memocash.New())
 	parsers = append(parsers, simple.New())
 }
 

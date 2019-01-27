@@ -34,5 +34,5 @@ func (s *Simple) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 		parts = append(parts, p)
 	}
 
-	return true, "SIMPLE", "", &parts
+	return true, "OP_RETURN", "", &parts
 }

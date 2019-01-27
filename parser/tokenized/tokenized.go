@@ -74,7 +74,7 @@ func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 			p.UTF8 = string(d)
 			var parts []cache.Part
 			parts = append(parts, p)
-			return true, "TOKENIZED", "", &parts
+			return true, "Tokenized", "", &parts
 		}
 	}
 
