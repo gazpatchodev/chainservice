@@ -3,7 +3,7 @@ package memocash
 import (
 	"encoding/hex"
 
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -35,7 +35,7 @@ func New() *MemoCash {
 }
 
 // Parse comment
-func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
@@ -44,13 +44,13 @@ func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 
 	if len(res) == 2 && res[0] == 0x6d {
 		// Looks like a memo cash transaction (https://memo.cash/protocol)
-		var parts []cache.Part
+		var parts []models.Part
 
 		switch res[1] {
 		case 0x04: // Like / Tip memo - txhash(32)
 			fallthrough
 		case 0x06: // Follow user - address(35)
-			var p cache.Part
+			var p models.Part
 			var d []byte
 			d, _ = utils.ReadPushData(buf)
 			p.Hex = hex.EncodeToString(d)
@@ -66,13 +66,13 @@ func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 			// These guys have 32 bytes for the hash
 			// The rest is ASCII
 			// Ex: 6a 02 6d03 20 ae2102f5fba5e3464447cb65bec61deedf6c1df2f919bb4190335a06c4834796 4ca47468652072657374617572616e74206275696c7420616e64207461626c657320736574206265666f72652074686520637573746f6d6572732077616c6b20696e2074686520646f6f722e20416e6420697427732062657474657220746f2068617665207468652062696767657374206368616e676573207768656e20746865206665776573742070656f706c6520617265207573696e6720746865206e6574776f726b2c
-			var p1 cache.Part
+			var p1 models.Part
 			var d1 []byte
 			d1, buf = utils.ReadPushData(buf)
 			p1.Hex = hex.EncodeToString(d1)
 			parts = append(parts, p1)
 
-			var p2 cache.Part
+			var p2 models.Part
 			var d2 []byte
 			d2, buf = utils.ReadPushData(buf)
 			p2.Hex = hex.EncodeToString(d2)

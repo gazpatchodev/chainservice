@@ -15,7 +15,8 @@ import (
 	"github.com/ordishs/gocore"
 
 	"../bitcoin"
-	"../utils"
+	"../models"
+	"../parser"
 )
 
 var (
@@ -36,25 +37,17 @@ func init() {
 
 // OPReturnData comment
 type OPReturnData struct {
-	TxID      string      `json:"txid"`
-	Vout      uint16      `json:"vout"`
-	BlockHash string      `json:"blockHash"`
-	BlockTime string      `json:"blockTime"`
-	Value     uint16      `json:"value"`
-	Hex       string      `json:"hex,omitempty"`
-	Type      string      `json:"type"`
-	SubType   string      `json:"subType,omitempty"`
-	Text      string      `json:"text,omitempty"`
-	Parts     []Part      `json:"parts,omitempty"`
-	Err       interface{} `json:"error,omitempty"`
-}
-
-// Part struct
-type Part struct {
-	Hex    string `json:"hex,omitempty"`
-	UTF8   string `json:"utf8,omitempty"`
-	BASE64 string `json:"base64,omitempty"`
-	URI    string `json:"uri,omitempty"`
+	TxID      string        `json:"txid"`
+	Vout      uint16        `json:"vout"`
+	BlockHash string        `json:"blockHash"`
+	BlockTime string        `json:"blockTime"`
+	Value     uint16        `json:"value"`
+	Hex       string        `json:"hex,omitempty"`
+	Type      string        `json:"type"`
+	SubType   string        `json:"subType,omitempty"`
+	Text      string        `json:"text,omitempty"`
+	Parts     []models.Part `json:"parts,omitempty"`
+	Err       interface{}   `json:"error,omitempty"`
 }
 
 // GetOPReturnData comment
@@ -94,46 +87,26 @@ func GetOPReturnDataFromBitcoin(txid string, vout uint16) (*OPReturnData, error)
 		return nil, fmt.Errorf("Failed to Decode script: %+v", err)
 	}
 
-	// Make sure this is an OP_RETURN script...
-	if script[0] != 0x6a {
-		return nil, fmt.Errorf("vout %d is not an OP_RETURN script", vout)
-	}
+	s, st, parts := parser.Parse(script)
 
 	bt := "N/A"
 	if tx.Blocktime != 0 {
 		bt = time.Unix(0, int64(tx.Blocktime*1000*int64(time.Millisecond))).Format(time.RFC3339)
 	}
 
-	parts := readPushDatas(script[1:])
-
 	opr := &OPReturnData{
 		TxID:      txid,
 		Vout:      vout,
 		BlockHash: tx.BlockHash,
 		BlockTime: bt,
+		Type:      s,
+		SubType:   st,
+		Parts:     *parts,
 		Value:     uint16(tx.Vout[vout].Value),
 		Hex:       tx.Vout[vout].ScriptPubKey.Hex,
-		Parts:     parts,
 	}
 
 	return opr, nil
-}
-
-func readPushDatas(buf []byte) []Part {
-	var parts []Part
-
-	for len(buf) > 0 {
-		var data []byte
-		// Keep reading until there's no more data...
-		data, buf = utils.ReadPushData(buf)
-		part := Part{
-			Hex:  hex.EncodeToString(data),
-			UTF8: string(data),
-		}
-		parts = append(parts, part)
-	}
-
-	return parts
 }
 
 func buildFilename(txid string, vout uint16) (string, error) {

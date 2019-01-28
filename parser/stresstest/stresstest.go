@@ -1,7 +1,7 @@
 package stresstest
 
 import (
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -14,7 +14,7 @@ func New() *StressTest {
 }
 
 // Parse comment
-func (t *StressTest) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (t *StressTest) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}

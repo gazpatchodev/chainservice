@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"../cache"
+	"../models"
 	"./base64"
 	"./memocash"
 	"./moneybutton"
@@ -13,7 +13,7 @@ import (
 
 // Parser interface
 type Parser interface {
-	Parse(buf []byte) (bool, string, string, *[]cache.Part)
+	Parse(buf []byte) (bool, string, string, *[]models.Part)
 }
 
 var parsers []Parser
@@ -30,7 +30,7 @@ func init() {
 }
 
 // Parse comment
-func Parse(buf []byte) (string, string, *[]cache.Part) {
+func Parse(buf []byte) (string, string, *[]models.Part) {
 	for _, p := range parsers {
 		match, t, st, parts := p.Parse(buf)
 		if match {

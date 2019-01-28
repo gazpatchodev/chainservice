@@ -3,7 +3,7 @@ package tokenized
 import (
 	"encoding/hex"
 
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -52,7 +52,7 @@ func New() *Tokenized {
 }
 
 // Parse comment
-func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
@@ -75,10 +75,10 @@ func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 				return false, "", "", nil
 			}
 
-			var p cache.Part
+			var p models.Part
 			p.Hex = hex.EncodeToString(res[4:])
 			p.UTF8 = string(res[7:]) // Skip the 0x00
-			var parts []cache.Part
+			var parts []models.Part
 			parts = append(parts, p)
 			return true, "Tokenized", action, &parts
 		}

@@ -27,7 +27,7 @@ func TestATokenizedScript(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "ABC Co Common Eq Agreement", (*p)[0].UTF8[0:26])
 	}
 
-	// t.Logf("%#v", p)
+	t.Logf("%#v", p)
 }
 
 func TestSimpleScript(t *testing.T) {

@@ -1,7 +1,7 @@
 package yours
 
 import (
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -14,7 +14,7 @@ func New() *Yours {
 }
 
 // Parse comment
-func (t *Yours) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (t *Yours) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}

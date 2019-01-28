@@ -3,7 +3,7 @@ package moneybutton
 import (
 	"regexp"
 
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -30,7 +30,7 @@ func New() *MoneyButton {
 }
 
 // Parse comment
-func (t *MoneyButton) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (t *MoneyButton) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
@@ -47,9 +47,9 @@ func (t *MoneyButton) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 
 			audio := a
 
-			var p cache.Part
+			var p models.Part
 			p.URI = string(audio)
-			var parts []cache.Part
+			var parts []models.Part
 			parts = append(parts, p)
 			return true, "moneybutton.com", "URI", &parts
 		}

@@ -3,7 +3,7 @@ package simple
 import (
 	"encoding/hex"
 
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -16,19 +16,19 @@ func New() *Simple {
 }
 
 // Parse comment
-func (s *Simple) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (s *Simple) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
 
 	buf = buf[1:]
 
-	var parts []cache.Part
+	var parts []models.Part
 
 	for len(buf) > 0 {
 		var d []byte
 		d, buf = utils.ReadPushData(buf)
-		var p cache.Part
+		var p models.Part
 		p.Hex = hex.EncodeToString(d)
 		p.UTF8 = string(d)
 		parts = append(parts, p)

@@ -3,7 +3,7 @@ package base64
 import (
 	"regexp"
 
-	"../../cache"
+	"../../models"
 	"../../utils"
 )
 
@@ -30,7 +30,7 @@ func New() *Base64 {
 }
 
 // Parse comment
-func (t *Base64) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
+func (t *Base64) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	if buf[0] != 0x6a {
 		return false, "", "", nil
 	}
@@ -69,9 +69,9 @@ func (t *Base64) Parse(buf []byte) (bool, string, string, *[]cache.Part) {
 		_ = sr2
 		if sr := sourceRE.FindStringSubmatch(s); len(sr) > 0 {
 			if len(sr) > 1 {
-				var p cache.Part
+				var p models.Part
 				p.BASE64 = sr[1]
-				var parts []cache.Part
+				var parts []models.Part
 				parts = append(parts, p)
 				return true, "Base64", base64Type, &parts
 			}
