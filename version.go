@@ -1,6 +1,6 @@
 package main
 
 // Version of the app to be incremented automatically every build
-const version = "0.0.6"
+const version = "0.0.7"
 
 var commit string
