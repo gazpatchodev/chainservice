@@ -78,7 +78,16 @@ func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 			p2.Hex = hex.EncodeToString(d2)
 			p2.UTF8 = string(d2)
 			parts = append(parts, p2)
+
+		case 0x02:
+			var p models.Part
+			var d []byte
+			d, buf = utils.ReadPushData(buf)
+			p.Hex = hex.EncodeToString(d)
+			p.UTF8 = string(d)
+			parts = append(parts, p)
 		}
+
 		return true, "memo.cash", memoPrefixes[int(res[1])], &parts
 	}
 	return false, "", "", nil
