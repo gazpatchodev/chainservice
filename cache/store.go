@@ -63,10 +63,15 @@ func GetOPReturnData(txid string, vout uint16) (opr *OPReturnData, err error) {
 	if err != nil {
 		if os.IsNotExist(err) {
 			opr, err = GetOPReturnDataFromBitcoin(txid, vout)
-			if err == nil {
+			if err != nil {
+				logger.Infof("ERROR /%s/%d (%+v)", txid, vout, err)
+			} else {
 				put(opr)
+				logger.Infof("BITCOIN /%s/%d", txid, vout)
 			}
 		}
+	} else {
+		logger.Infof("CACHE   /%s/%d", txid, vout)
 	}
 
 	return
