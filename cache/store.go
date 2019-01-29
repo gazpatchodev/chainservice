@@ -101,9 +101,13 @@ func GetOPReturnDataFromBitcoin(txid string, vout uint16) (*OPReturnData, error)
 		BlockTime: bt,
 		Type:      s,
 		SubType:   st,
-		Parts:     *parts,
 		Value:     uint16(tx.Vout[vout].Value),
 		Hex:       tx.Vout[vout].ScriptPubKey.Hex,
+	}
+
+	// Only add parts to opr if it isn't nil
+	if parts != nil {
+		opr.Parts = *parts
 	}
 
 	return opr, nil

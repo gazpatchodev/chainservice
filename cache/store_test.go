@@ -38,6 +38,15 @@ func TestGet(t *testing.T) {
 	t.Logf("%+v", d2)
 }
 
+func TestYoursFailing(t *testing.T) {
+	d, err := GetOPReturnDataFromBitcoin("6ee609d1770e0e9dcad0fd216bba78109aa66715c2a8ebb9f6fdc0302b86ddc2", 0)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Logf("%+v", d)
+}
+
 func TestGetRealExample(t *testing.T) {
 	d, err := GetOPReturnData("8bae12b5f4c088d940733dcd1455efc6a3a69cf9340e17a981286d3778615684", 0)
 	if err != nil {

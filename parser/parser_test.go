@@ -91,6 +91,24 @@ func TestAudio(t *testing.T) {
 	t.Log((*p)[0].URI)
 }
 
+func TestYoursFailingScript(t *testing.T) {
+	buf, _ := hex.DecodeString("6a09796f7572732e6f7267")
+	s, st, p := Parse(buf)
+
+	if s != "yours.org" {
+		t.Errorf("Expected %q, got %q", "yours.org", s)
+	}
+
+	if st != "" {
+		t.Errorf("Expected %q, got %q", "", st)
+	}
+
+	if p != nil {
+		t.Errorf("Expected nil, got %v", p)
+	}
+
+}
+
 func TestYoursScript(t *testing.T) {
 	buf, _ := hex.DecodeString("6a09796f7572732e6f7267")
 	s, st, p := Parse(buf)
