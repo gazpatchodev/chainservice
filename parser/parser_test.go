@@ -27,7 +27,7 @@ func TestATokenizedScript(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "ABC Co Common Eq Agreement", (*p)[0].UTF8[0:26])
 	}
 
-	t.Logf("%#v", p)
+	// t.Logf("%#v", p)
 }
 
 func TestSimpleScript(t *testing.T) {
@@ -78,7 +78,7 @@ func TestAudio(t *testing.T) {
 		t.Error(err)
 	}
 
-	s, st, p := Parse(buf)
+	s, st, _ := Parse(buf)
 
 	if s != "moneybutton.com" {
 		t.Errorf("Expected %q, got %q", "moneybutton.com", s)
@@ -88,7 +88,29 @@ func TestAudio(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "URI", st)
 	}
 
-	t.Log((*p)[0].URI)
+	// t.Log((*p)[0].URI)
+}
+
+func TestRIFF(t *testing.T) {
+	h, err := ioutil.ReadFile("riff.hex")
+	if err != nil {
+		t.Error(err)
+	}
+	buf, err := hex.DecodeString(string(h))
+	if err != nil {
+		t.Error(err)
+	}
+
+	s, st, _ := Parse(buf)
+
+	if s != "RIFF" {
+		t.Errorf("Expected %q, got %q", "RIFF", s)
+	}
+
+	if st != "audio/x-wav" {
+		t.Errorf("Expected %q, got %q", "audio/x-wav", st)
+	}
+
 }
 
 func TestYoursFailingScript(t *testing.T) {

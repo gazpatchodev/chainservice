@@ -5,6 +5,7 @@ import (
 	"./base64"
 	"./memocash"
 	"./moneybutton"
+	"./riff"
 	"./simple"
 	"./stresstest"
 	"./tokenized"
@@ -20,6 +21,7 @@ var parsers []Parser
 
 func init() {
 	// The order of these IS important.
+	parsers = append(parsers, riff.New())
 	parsers = append(parsers, yours.New())
 	parsers = append(parsers, stresstest.New())
 	parsers = append(parsers, tokenized.New())
