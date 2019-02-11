@@ -35,59 +35,52 @@ func init() {
 	}
 }
 
+// Vout comment
+type Vout struct {
+	N       int           `json:"vout"`
+	Value   uint16        `json:"value"`
+	Hex     string        `json:"hex,omitempty"`
+	Type    string        `json:"type"`
+	SubType string        `json:"subType,omitempty"`
+	Text    string        `json:"text,omitempty"`
+	Parts   []models.Part `json:"parts,omitempty"`
+}
+
 // OPReturnData comment
 type OPReturnData struct {
-	TxID      string        `json:"txid"`
-	Vout      uint16        `json:"vout"`
-	BlockHash string        `json:"blockHash"`
-	BlockTime string        `json:"blockTime"`
-	Value     uint16        `json:"value"`
-	Hex       string        `json:"hex,omitempty"`
-	Type      string        `json:"type"`
-	SubType   string        `json:"subType,omitempty"`
-	Text      string        `json:"text,omitempty"`
-	Parts     []models.Part `json:"parts,omitempty"`
-	Err       interface{}   `json:"error,omitempty"`
+	TxID      string `json:"txid"`
+	BlockHash string `json:"blockHash"`
+	BlockTime string `json:"blockTime"`
+	Vouts     []Vout `json:"vouts"`
 }
 
 // GetOPReturnData comment
-func GetOPReturnData(txid string, vout uint16) (opr *OPReturnData, err error) {
-	opr, err = get(txid, vout)
+func GetOPReturnData(txid string) (opr *OPReturnData, err error) {
+	opr, err = get(txid)
 	if err != nil {
 		if os.IsNotExist(err) {
-			opr, err = GetOPReturnDataFromBitcoin(txid, vout)
+			opr, err = GetOPReturnDataFromBitcoin(txid)
 			if err != nil {
-				logger.Infof("ERROR /%s/%d (%+v)", txid, vout, err)
+				logger.Infof("ERROR /%s (%+v)", txid, err)
 			} else {
 				put(opr)
-				logger.Infof("BITCOIN /%s/%d", txid, vout)
+				logger.Infof("BITCOIN /%s", txid)
 			}
 		}
 	} else {
-		logger.Infof("CACHE   /%s/%d", txid, vout)
+		logger.Infof("CACHE   /%s", txid)
 	}
 
 	return
 }
 
 // GetOPReturnDataFromBitcoin comment
-func GetOPReturnDataFromBitcoin(txid string, vout uint16) (*OPReturnData, error) {
+func GetOPReturnDataFromBitcoin(txid string) (*OPReturnData, error) {
 	log.Println("BITCOIN")
 	tx, err := bitcoind.GetRawTransaction(txid)
 	if err != nil {
 		return nil, err
 	}
-
-	if int(vout) > len(tx.Vout) {
-		return nil, fmt.Errorf("vout %d does not exist in this transaction", vout)
-	}
-
-	script, err := hex.DecodeString(tx.Vout[vout].ScriptPubKey.Hex)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to Decode script: %+v", err)
-	}
-
-	s, st, parts := parser.Parse(script)
 
 	bt := "N/A"
 	if tx.Blocktime != 0 {
@@ -96,24 +89,36 @@ func GetOPReturnDataFromBitcoin(txid string, vout uint16) (*OPReturnData, error)
 
 	opr := &OPReturnData{
 		TxID:      txid,
-		Vout:      vout,
 		BlockHash: tx.BlockHash,
 		BlockTime: bt,
-		Type:      s,
-		SubType:   st,
-		Value:     uint16(tx.Vout[vout].Value),
-		Hex:       tx.Vout[vout].ScriptPubKey.Hex,
 	}
 
-	// Only add parts to opr if it isn't nil
-	if parts != nil {
-		opr.Parts = *parts
+	for _, vo := range tx.Vout {
+		script, err := hex.DecodeString(vo.ScriptPubKey.Hex)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to Decode script: %+v", err)
+		}
+
+		s, st, parts := parser.Parse(script)
+
+		if parts != nil {
+			vout := Vout{
+				N:       vo.N,
+				Type:    s,
+				SubType: st,
+				Value:   uint16(vo.Value),
+				Hex:     vo.ScriptPubKey.Hex,
+				Parts:   *parts,
+			}
+
+			opr.Vouts = append(opr.Vouts, vout)
+		}
 	}
 
 	return opr, nil
 }
 
-func buildFilename(txid string, vout uint16) (string, error) {
+func buildFilename(txid string) (string, error) {
 	if len(txid) != 64 {
 		return "", errors.New("txid must be 32 bytes")
 	}
@@ -126,7 +131,7 @@ func buildFilename(txid string, vout uint16) (string, error) {
 		return "", err
 	}
 
-	return path.Join(folder, fmt.Sprintf("%s.%d.json", txid, vout)), nil
+	return path.Join(folder, fmt.Sprintf("%s.opr.json", txid)), nil
 }
 
 func prettyprint(b []byte) ([]byte, error) {
@@ -136,7 +141,7 @@ func prettyprint(b []byte) ([]byte, error) {
 }
 
 func put(opr *OPReturnData) (err error) {
-	filename, err := buildFilename(opr.TxID, opr.Vout)
+	filename, err := buildFilename(opr.TxID)
 	if err != nil {
 		return
 	}
@@ -155,8 +160,8 @@ func put(opr *OPReturnData) (err error) {
 	return
 }
 
-func get(txid string, vout uint16) (opr *OPReturnData, err error) {
-	filename, err := buildFilename(txid, vout)
+func get(txid string) (opr *OPReturnData, err error) {
+	filename, err := buildFilename(txid)
 	if err != nil {
 		return
 	}

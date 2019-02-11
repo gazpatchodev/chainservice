@@ -2,13 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -47,26 +45,34 @@ func appCleanup() {
 func start() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/v1/bsv/{txhash}/{vout:[0-9]+}", getTransactionOutput).Methods("GET")
+	r.HandleFunc("/api/v1/bsv/{txhash}", getTransactionOutputs).Methods("GET")
+	// r.HandleFunc("/api/v1/bsv/{txhash}/{vout:[0-9]+}", getTransactionOutput).Methods("GET")
 	r.Handle("/", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(errorHandler)))
 
 	// Wrap our server with our gzip handler to gzip compress all responses.
 	log.Fatal(http.ListenAndServe(listenAddress, handlers.CompressHandler(r)))
 }
 
-func getTransactionOutput(w http.ResponseWriter, r *http.Request) {
+func getTransactionOutputs(w http.ResponseWriter, r *http.Request) {
 
 	txhash := mux.Vars(r)["txhash"]
-	vout, err := strconv.Atoi(mux.Vars(r)["vout"])
-	if err != nil {
-		// This shouldn't happen because the mux routing should not allow non integer characters through.
-		logger.Errorf("vout parameter must be a positive integer: %+v", err)
-		w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, err.Error())
-		return
-	}
 
-	opr, err := cache.GetOPReturnData(txhash, uint16(vout))
+	// voutStr, ok := mux.Vars(r)["vout"]
+	// vout := -1
+	// var err error
+
+	// if ok {
+	// 	vout, err = strconv.Atoi(voutStr)
+	// 	if err != nil {
+	// 		// This shouldn't happen because the mux routing should not allow non integer characters through.
+	// 		logger.Errorf("vout parameter must be a positive integer: %+v", err)
+	// 		w.WriteHeader(http.StatusBadRequest)
+	// 		io.WriteString(w, err.Error())
+	// 		return
+	// 	}
+	// }
+
+	opr, err := cache.GetOPReturnData(txhash) //, int16(vout))
 	if err != nil {
 		logger.Errorf("Error getting transaction: %+v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -76,11 +82,12 @@ func getTransactionOutput(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	e := json.NewEncoder(w)
+
 	e.Encode(opr)
 }
 
 func errorHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
-	io.WriteString(w, fmt.Sprintf("%+v", r))
-
+	io.WriteString(w, "Not found.")
+	// io.WriteString(w, "fmt.Sprintf("%+v", r)")
 }

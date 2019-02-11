@@ -165,3 +165,23 @@ func TestMemoCashTipScript(t *testing.T) {
 	}
 
 }
+
+func TestBitDBTipScript(t *testing.T) {
+	buf, _ := hex.DecodeString("6a004057656c6c6265696e673a204f796f2e636173682069732061202062697464622073656172636820656e67696e65206275696c74206279205f756e777269746572")
+	s, st, p := Parse(buf)
+
+	if s != "memo.cash" {
+		t.Errorf("Expected %q, got %q", "yours.org", s)
+	}
+
+	if st != "Like / tip memo" {
+		t.Errorf("Expected %q, got %q", "Like / tip memo", st)
+	}
+
+	if len((*p)[0].Hex) != 64 {
+		t.Errorf("Expected 32 byte hash, got %v", (*p)[0].Hex)
+	}
+
+	t.Log(s, st, p)
+
+}
