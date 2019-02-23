@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/ordishs/gocore"
 
-	"./cache"
+	"github.com/gazpatchodev/chainservice/cache"
 )
 
 var (

@@ -1,15 +1,15 @@
 package parser
 
 import (
-	"../models"
-	"./base64"
-	"./memocash"
-	"./moneybutton"
-	"./riff"
-	"./simple"
-	"./stresstest"
-	"./tokenized"
-	"./yours"
+	"github.com/gazpatchodev/chainservice/models"
+	"github.com/gazpatchodev/chainservice/parser/base64"
+	"github.com/gazpatchodev/chainservice/parser/memocash"
+	"github.com/gazpatchodev/chainservice/parser/moneybutton"
+	"github.com/gazpatchodev/chainservice/parser/riff"
+	"github.com/gazpatchodev/chainservice/parser/simple"
+	"github.com/gazpatchodev/chainservice/parser/stresstest"
+	"github.com/gazpatchodev/chainservice/parser/tokenized"
+	"github.com/gazpatchodev/chainservice/parser/yours"
 )
 
 // Parser interface

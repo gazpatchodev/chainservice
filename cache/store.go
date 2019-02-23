@@ -14,9 +14,9 @@ import (
 
 	"github.com/ordishs/gocore"
 
-	"../bitcoin"
-	"../models"
-	"../parser"
+	"github.com/gazpatchodev/chainservice/bitcoin"
+	"github.com/gazpatchodev/chainservice/models"
+	"github.com/gazpatchodev/chainservice/parser"
 )
 
 var (

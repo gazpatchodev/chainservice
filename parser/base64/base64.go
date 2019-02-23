@@ -3,8 +3,8 @@ package base64
 import (
 	"regexp"
 
-	"../../models"
-	"../../utils"
+	"github.com/gazpatchodev/chainservice/models"
+	"github.com/gazpatchodev/chainservice/utils"
 )
 
 // Base64 comment

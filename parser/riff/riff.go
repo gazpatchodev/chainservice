@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 	"strings"
 
-	"../../models"
-	"../../utils"
+	"github.com/gazpatchodev/chainservice/models"
+	"github.com/gazpatchodev/chainservice/utils"
 )
 
 // Riff comment

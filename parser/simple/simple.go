@@ -3,8 +3,8 @@ package simple
 import (
 	"encoding/hex"
 
-	"../../models"
-	"../../utils"
+	"github.com/gazpatchodev/chainservice/models"
+	"github.com/gazpatchodev/chainservice/utils"
 )
 
 // Simple comment
