@@ -1,8 +1,6 @@
 package tokenized
 
 import (
-	"encoding/hex"
-
 	"github.com/gazpatchodev/chainservice/models"
 	"github.com/gazpatchodev/chainservice/utils"
 )
@@ -76,8 +74,9 @@ func (t *Tokenized) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 			}
 
 			var p models.Part
-			p.Hex = hex.EncodeToString(res[4:])
-			p.UTF8 = string(res[7:]) // Skip the 0x00
+			p.MimeType = "text/plain; charset=utf-8"
+			// p.Hex = hex.EncodeToString(res[4:])
+			p.Data = string(res[7:]) // Skip the 0x00
 			var parts []models.Part
 			parts = append(parts, p)
 			return true, "Tokenized", action, &parts

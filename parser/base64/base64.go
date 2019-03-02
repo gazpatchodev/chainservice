@@ -70,7 +70,8 @@ func (t *Base64) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 		if sr := sourceRE.FindStringSubmatch(s); len(sr) > 0 {
 			if len(sr) > 1 {
 				var p models.Part
-				p.BASE64 = sr[1]
+				p.MimeType = "application/base64"
+				p.Data = sr[1]
 				var parts []models.Part
 				parts = append(parts, p)
 				return true, "Base64", base64Type, &parts

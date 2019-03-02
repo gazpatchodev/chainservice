@@ -53,7 +53,8 @@ func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 			var p models.Part
 			var d []byte
 			d, _ = utils.ReadPushData(buf)
-			p.Hex = hex.EncodeToString(d)
+			p.MimeType = "text/plain"
+			p.Data = hex.EncodeToString(d)
 			parts = append(parts, p)
 
 		case 0x03: // Reply to memo
@@ -69,22 +70,23 @@ func (t *MemoCash) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 			var p1 models.Part
 			var d1 []byte
 			d1, buf = utils.ReadPushData(buf)
-			p1.Hex = hex.EncodeToString(d1)
+			p1.MimeType = "text/plain; charset=utf-8"
+			p1.Data = hex.EncodeToString(d1)
 			parts = append(parts, p1)
 
 			var p2 models.Part
 			var d2 []byte
 			d2, buf = utils.ReadPushData(buf)
-			p2.Hex = hex.EncodeToString(d2)
-			p2.UTF8 = string(d2)
+			p2.MimeType = "text/plain; charset=utf-8"
+			p2.Data = string(d2)
 			parts = append(parts, p2)
 
 		case 0x02:
 			var p models.Part
 			var d []byte
 			d, buf = utils.ReadPushData(buf)
-			p.Hex = hex.EncodeToString(d)
-			p.UTF8 = string(d)
+			p.MimeType = "text/plain; charset=utf-8"
+			p.Data = string(d)
 			parts = append(parts, p)
 		}
 

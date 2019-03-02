@@ -23,8 +23,8 @@ func TestATokenizedScript(t *testing.T) {
 		t.Errorf("Expected 1 part, got %d", len(*p))
 	}
 
-	if (*p)[0].UTF8[0:26] != "ABC Co Common Eq Agreement" {
-		t.Errorf("Expected %q, got %q", "ABC Co Common Eq Agreement", (*p)[0].UTF8[0:26])
+	if (*p)[0].Data[0:26] != "ABC Co Common Eq Agreement" {
+		t.Errorf("Expected %q, got %q", "ABC Co Common Eq Agreement", (*p)[0].Data[0:26])
 	}
 
 	// t.Logf("%#v", p)
@@ -42,8 +42,8 @@ func TestSimpleScript(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "", st)
 	}
 
-	if (*p)[0].UTF8 != "charley loves heidi" {
-		t.Errorf("Expected %q, got %q", "charley loves heidi", (*p)[0].UTF8)
+	if (*p)[0].Data != "charley loves heidi" {
+		t.Errorf("Expected %q, got %q", "charley loves heidi", (*p)[0].Data)
 	}
 }
 
@@ -160,8 +160,8 @@ func TestMemoCashTipScript(t *testing.T) {
 		t.Errorf("Expected %q, got %q", "Like / tip memo", st)
 	}
 
-	if len((*p)[0].Hex) != 64 {
-		t.Errorf("Expected 32 byte hash, got %v", (*p)[0].Hex)
+	if len((*p)[0].Data) != 64 {
+		t.Errorf("Expected 32 byte hash, got %v", (*p)[0].Data)
 	}
 
 }

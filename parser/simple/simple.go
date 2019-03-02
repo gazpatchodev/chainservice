@@ -1,8 +1,6 @@
 package simple
 
 import (
-	"encoding/hex"
-
 	"github.com/gazpatchodev/chainservice/models"
 	"github.com/gazpatchodev/chainservice/utils"
 )
@@ -29,8 +27,8 @@ func (s *Simple) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 		var d []byte
 		d, buf = utils.ReadPushData(buf)
 		var p models.Part
-		p.Hex = hex.EncodeToString(d)
-		p.UTF8 = string(d)
+		p.MimeType = "text/plain; charset=utf-8"
+		p.Data = string(d)
 		parts = append(parts, p)
 	}
 

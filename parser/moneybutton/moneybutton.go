@@ -48,7 +48,9 @@ func (t *MoneyButton) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 			audio := a
 
 			var p models.Part
-			p.URI = string(audio)
+			p.MimeType = "text/plain; charset=utf-8"
+
+			p.Data = string(audio)
 			var parts []models.Part
 			parts = append(parts, p)
 			return true, "moneybutton.com", "URI", &parts

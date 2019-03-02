@@ -26,8 +26,8 @@ func (s *Riff) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 
 	wallet, buf := utils.ReadPushData(buf[1:])
 	var walletPart models.Part
-	walletPart.Hex = hex.EncodeToString(wallet)
-	walletPart.UTF8 = string(wallet)
+	walletPart.MimeType = "text/plain; charset=utf-8"
+	walletPart.Data = string(wallet)
 	parts = append(parts, walletPart)
 
 	data, buf := utils.ReadPushData(buf)
@@ -41,13 +41,14 @@ func (s *Riff) Parse(buf []byte) (bool, string, string, *[]models.Part) {
 	}
 
 	var dataPart models.Part
-	dataPart.Hex = hex.EncodeToString(data)
+	dataPart.MimeType = "text/plain; charset=utf-8"
+	dataPart.Data = hex.EncodeToString(data)
 	parts = append(parts, dataPart)
 
 	proto, buf := utils.ReadPushData(buf)
 	var protoPart models.Part
-	protoPart.Hex = hex.EncodeToString(proto)
-	protoPart.UTF8 = string(proto)
+	protoPart.MimeType = "audio/wav"
+	protoPart.Data = string(proto)
 	parts = append(parts, protoPart)
 
 	return true, "RIFF", string(proto), &parts
