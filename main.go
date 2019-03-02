@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -90,9 +91,10 @@ func getTransactionOutputs(w http.ResponseWriter, r *http.Request) {
 
 		if i == 0 {
 			// No matching vouts...
-			logger.Errorf("vout %d does not exist in transaction", voutRequested)
+			m := fmt.Sprintf("vout %d does not exist in transaction", voutRequested)
+			logger.Error(m)
 			w.WriteHeader(http.StatusBadRequest)
-			io.WriteString(w, err.Error())
+			io.WriteString(w, m)
 			return
 		}
 
